@@ -12,20 +12,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double minTime = 0.0;
-  double maxTime = 0.0;
-  double ascSecond = 0.0;
-  double descSecond = 0.0;
+  DateTime minTime = DateTime.now();
+  DateTime maxTime = DateTime.now();
+  int ascSecond = 0;
+  int descSecond = 0;
 
   double lastPositionSpeed = 0;
   double currentPositionSpeed = 0;
+  DateTime ascSecondtemp;
+
+  Duration difference1;
+  Duration difference2;
 
   @override
   void initState() {
-    minTime = 0.0;
-    maxTime = 0.0;
-    ascSecond = 0.0;
-    descSecond = 0.0;
+    minTime = DateTime.now();
+    maxTime = DateTime.now();
     lastPositionSpeed = 0;
     currentPositionSpeed = 0;
 
@@ -57,21 +59,17 @@ class _MyHomePageState extends State<MyHomePage> {
         // if(double.parse(currentVelocity) == 2.777){
         if (currentPositionSpeed >= 0.1) {
           setState(() {
-            minTime = position.timestamp.second == null
-                ? 0
-                : position.timestamp.second.toDouble();
+            minTime = position.timestamp == null ? 0 : position.timestamp;
           });
         }
         // if(double.parse(currentVelocity) == 8.33){ //==30kmh
         if (currentPositionSpeed >= 0.5) {
           setState(() {
-            maxTime = position.timestamp.second == null
-                ? 0
-                : position.timestamp.second.toDouble();
+            maxTime = position.timestamp == null ? 0 : position.timestamp;
           });
         }
         setState(() {
-          ascSecond = (maxTime - minTime).abs();
+          ascSecond = maxTime.difference(minTime).inSeconds.abs();
         });
       }
       if (currentPositionSpeed < lastPositionSpeed) {
@@ -80,22 +78,19 @@ class _MyHomePageState extends State<MyHomePage> {
         if (currentPositionSpeed >= 0.5) {
           //== 30
           setState(() {
-            minTime = position.timestamp.second == null
-                ? 0
-                : position.timestamp.second.toDouble();
+            minTime = position.timestamp == null ? 0 : position.timestamp;
           });
         }
         //check if speed = 10 kmh == 2.777 ms(min speed) calculate time
         if (currentPositionSpeed >= 0.1) {
           //10
           setState(() {
-            maxTime = position.timestamp.second == null
-                ? 0
-                : position.timestamp.second.toDouble();
+            maxTime = position.timestamp == null ? 0 : position.timestamp;
           });
         }
         setState(() {
-          descSecond = (maxTime - minTime).abs();
+          descSecond = maxTime.difference(minTime).inSeconds.abs();
+          print(descSecond);
         });
       }
     });
