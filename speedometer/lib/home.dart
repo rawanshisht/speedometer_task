@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 : position.timestamp.second.toDouble();
           });
         }
-        // if(double.parse(currentVelocity) == currentVelocity){ //==30
+        // if(double.parse(currentVelocity) == 8.33){ //==30kmh
         if (currentPositionSpeed >= 0.5) {
           setState(() {
             maxTime = position.timestamp.second == null
@@ -76,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       if (currentPositionSpeed < lastPositionSpeed) {
         //accreleration is decreasing
+        // if(double.parse(currentVelocity) == 8.33){ //==30kmh
         if (currentPositionSpeed >= 0.5) {
           //== 30
           setState(() {
@@ -84,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 : position.timestamp.second.toDouble();
           });
         }
-        // if(double.parse(currentVelocity) == currentVelocity){ //==30
+        //check if speed = 10 kmh == 2.777 ms(min speed) calculate time
         if (currentPositionSpeed >= 0.1) {
           //10
           setState(() {
