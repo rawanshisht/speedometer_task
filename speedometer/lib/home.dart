@@ -55,9 +55,9 @@ class _MyHomePageState extends State<MyHomePage> {
       });
       if (currentPositionSpeed > lastPositionSpeed) {
         //accreleration is increasing
-        //check if speed = 10 kmh == 2.777 ms(min speed) calculate time
-        // if(double.parse(currentVelocity) == 2.777){
-        if (currentPositionSpeed >= 0.1) {
+        //check if speed = 10 kmh == 2.777 ms(min speed) calculate time tolerance (9 to 11)
+        // if (currentPositionSpeed >= 0.1) {
+        if (currentPositionSpeed >= 2.5 && currentPositionSpeed <= 3.05556) {
           setState(() {
             minTime = position.timestamp == null ? 0 : position.timestamp;
           });
@@ -75,7 +75,9 @@ class _MyHomePageState extends State<MyHomePage> {
       if (currentPositionSpeed < lastPositionSpeed) {
         //accreleration is decreasing
         // if(double.parse(currentVelocity) == 8.33){ //==30kmh
-        if (currentPositionSpeed >= 0.5) {
+        // if (currentPositionSpeed >= 0.5) {
+        if (currentPositionSpeed >= 8.05556 &&
+            currentPositionSpeed <= 8.61111) {
           //== 30
           setState(() {
             minTime = position.timestamp == null ? 0 : position.timestamp;
