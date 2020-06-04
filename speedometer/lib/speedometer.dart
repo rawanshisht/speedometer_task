@@ -12,23 +12,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  DateTime minTime = DateTime.now();
-  DateTime maxTime = DateTime.now();
-  int ascSecond = 0;
-  int descSecond = 0;
-
-  double lastPositionSpeed = 0;
   double currentPositionSpeed = 0;
-  DateTime ascSecondtemp;
 
-  Duration difference1;
-  Duration difference2;
+  int inc = 0;
+  int dec = 0;
+  int minTime = 0;
+  int maxTime = 0;
+
+  int _counterInc = 0;
+  int _counterDec = 0;
+  Timer _timerInc;
+  Timer _timerDec;
 
   @override
   void initState() {
-    minTime = DateTime.now();
-    maxTime = DateTime.now();
-    lastPositionSpeed = 0;
+    minTime = 0;
+    maxTime = 0;
+
+    _counterInc = 0;
+    _counterDec = 0;
+
+    _timerInc = null;
+    _timerDec = null;
     currentPositionSpeed = 0;
 
     getSpeed();
@@ -46,56 +51,80 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         currentPositionSpeed = position.speed == null ? 0 : speed;
       });
-      var lastPosition = geolocator
-          .getLastKnownPosition(desiredAccuracy: LocationAccuracy.high)
-          .then((value) {
-        setState(() {
-          lastPositionSpeed = value.speed;
-        });
-      });
-      if (currentPositionSpeed > lastPositionSpeed) {
-        //accreleration is increasing
-        //check if speed = 10 kmh == 2.777 ms(min speed) calculate time tolerance (9 to 11)
-        // if (currentPositionSpeed >= 0.1) {
-        if (currentPositionSpeed >= 2.5 && currentPositionSpeed <= 3.05556) {
-          setState(() {
-            minTime = position.timestamp == null ? 0 : position.timestamp;
-          });
+      // if (currentPositionSpeed >= 0.1 && inc == 0) {
+      if (currentPositionSpeed >= 2.5 &&
+          currentPositionSpeed <= 3.05556 &&
+          inc == 0 &&
+          dec == 0) {
+        //arround 10
+        inc = 1;
+        dec = 0;
+        if (_timerInc != null) {
+          _timerInc.cancel();
         }
-        // if(double.parse(currentVelocity) == 8.33){ //==30kmh
-        // if (currentPositionSpeed >= 0.5) {
-        if (currentPositionSpeed >= 8.05556 &&
-            currentPositionSpeed <= 8.61111) {
+        _timerInc = Timer.periodic(Duration(seconds: 1), (timer) {
           setState(() {
-            maxTime = position.timestamp == null ? 0 : position.timestamp;
+            if (_counterInc >= 0) {
+              _counterInc++;
+            } else {
+              _timerInc.cancel();
+            }
+
+            minTime = _counterInc;
           });
-        }
-        setState(() {
-          ascSecond = maxTime.difference(minTime).inSeconds.abs();
+          print("INC: ${_counterInc}");
         });
       }
-      if (currentPositionSpeed < lastPositionSpeed) {
-        //accreleration is decreasing
-        // if(double.parse(currentVelocity) == 8.33){ //==30kmh
-        // if (currentPositionSpeed >= 0.5) {
-        if (currentPositionSpeed >= 8.05556 &&
-            currentPositionSpeed <= 8.61111) {
-          //== 30
-          setState(() {
-            minTime = position.timestamp == null ? 0 : position.timestamp;
-          });
+      // if ((currentPositionSpeed < 0.1 || currentPositionSpeed > 0.2) &&
+      //     inc == 1) {
+      if ((currentPositionSpeed < 2.77778 || currentPositionSpeed > 8.33333) &&
+          inc == 1) {
+        // mn 0 le 10 or > 30
+        inc = 0;
+        dec = 0;
+
+        if (_timerInc != null) {
+          _timerInc.cancel();
         }
-        //check if speed = 10 kmh == 2.777 ms(min speed) calculate time
-        // if (currentPositionSpeed >= 0.1) {
-        //10
-        if (currentPositionSpeed >= 2.5 && currentPositionSpeed <= 3.05556) {
-          setState(() {
-            maxTime = position.timestamp == null ? 0 : position.timestamp;
-          });
-        }
+        _counterInc = 0;
         setState(() {
-          descSecond = maxTime.difference(minTime).inSeconds.abs();
-          print(descSecond);
+          minTime = 0;
+        });
+      }
+      // if (currentPositionSpeed >= 0.2 && dec == 0) {
+      if (currentPositionSpeed >= 8.05556 &&
+          currentPositionSpeed <= 8.61111 &&
+          dec == 0 &&
+          inc == 0) {
+        //around 30
+        dec = 1;
+        inc = 0;
+        if (_timerDec != null) {
+          _timerDec.cancel();
+        }
+        _timerDec = Timer.periodic(Duration(seconds: 1), (timer) async {
+          setState(() {
+            if (_counterDec >= 0) {
+              _counterDec++;
+            } else {
+              _timerDec.cancel();
+            }
+            maxTime = _counterDec;
+          });
+          print("DEC: ${_counterDec}");
+        });
+      }
+      // if ((currentPositionSpeed <= 0.1) && dec == 1) {
+      if ((currentPositionSpeed < 2.77778 || currentPositionSpeed > 8.33333) &&
+          dec == 1) {
+        dec = 0;
+        inc = 0;
+        if (_timerDec != null) {
+          _timerDec.cancel();
+        }
+        _counterDec = 0;
+        setState(() {
+          maxTime = 0;
         });
       }
     });
@@ -139,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: TextStyle(
                       fontSize: 30,
                     )),
-                Text("${ascSecond}",
+                Text("${minTime}",
                     style: TextStyle(
                       fontSize: 70,
                       fontFamily: "Digital",
@@ -155,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: TextStyle(
                   fontSize: 30,
                 )),
-            Text("${descSecond}",
+            Text("${maxTime}",
                 style: TextStyle(
                   fontSize: 70,
                   fontFamily: "Digital",
