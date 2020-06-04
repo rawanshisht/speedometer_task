@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import './home.dart';
+// import './home.dart';
+import './speedometer.dart';
 void main() {
   runApp(MyApp());
 }
